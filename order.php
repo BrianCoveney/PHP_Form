@@ -20,14 +20,14 @@
         <input id="large" type="radio" name="pizzaSize" value="large" onChange="redraw()" checked/>
    
       <div id="pizzaImages">
-		<img id="image1" src="images/base.png" width="250" height="250" alt="food pic"/>
-		<img id="image2" src="images/anchois.png" width="250" height="250" alt="food pic"/>
-		<img id="image3" src="images/pineapple.png" width="250" height="250" alt="food pic"/>
-		<img id="image4" src="images/pepperoni.png" width="250" height="250" alt="food pic"/>
-		<img id="image5" src="images/olives.png" width="250" height="250" alt="food pic"/>
-		<img id="image6" src="images/onion.png" width="250" height="250" alt="food pic"/>
-		<img id="image7" src="images/pepper.png" width="250" height="250" alt="food pic"/>
-	  </div>
+    <img id="image1" src="images/base.png" width="250" height="250" alt="food pic"/>
+    <img id="image2" src="images/anchois.png" width="250" height="250" alt="food pic"/>
+    <img id="image3" src="images/pineapple.png" width="250" height="250" alt="food pic"/>
+    <img id="image4" src="images/pepperoni.png" width="250" height="250" alt="food pic"/>
+    <img id="image5" src="images/olives.png" width="250" height="250" alt="food pic"/>
+    <img id="image6" src="images/onion.png" width="250" height="250" alt="food pic"/>
+    <img id="image7" src="images/pepper.png" width="250" height="250" alt="food pic"/>
+    </div>
       <br>
       <h3>Add Extra Toppings</h3>
     
@@ -59,10 +59,6 @@
         <input name="firstname" id="cname" type="text"/>
         <br/>
         <br/>
-        Second Name:
-        <input name="lastname" id="cname" type="text"/>
-        <br/>
-        <br/>
         Address:
         <textarea name="address" id = "caddress" type="text"rows="5" cols="30" ></textarea>
         <br/>
@@ -75,9 +71,9 @@
         <br/>
         Phone Number:
         <input name="phoneNo" id="phoneNumber" type="text" />
-		 <br/>
+     <br/>
          <br/>
-		Tick here if you are student:
+    Tick here if you are student:
         <input type="checkbox" id="studentdiscount" name="student" onChange="redraw()"/>
        
   

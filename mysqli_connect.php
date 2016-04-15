@@ -8,7 +8,7 @@
 <?php
 
 DEFINE ('DB_USER', 'root');
-DEFINE ('DB_PASSWORD', '<your_password>');
+DEFINE ('DB_PASSWORD', 'bossdog12');
 DEFINE ('DB_HOST', 'localhost');
 DEFINE ('DB_NAME', 'pizza');
 

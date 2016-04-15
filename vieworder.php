@@ -16,7 +16,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 	// database connection
 	require('mysqli_connect.php');
 
-	// initalise an error array
+	// initalise an error array !!!!!!!! PUT ERROR ARRAY BACK IN
 	$errors = array();
 
 
@@ -42,35 +42,20 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 	if(empty($checkFName))
 	{
 		$nameError = 'You forgot to enter your first name.';
+		$errors[] = "You forgot to enter your first name.";
 	}
 	// check first name format
 	elseif(!preg_match("/^[a-zA-Z ]*$/", $checkFName))
 	{
 		$nameError = "Only letters and spaces allowed for first name field.";
+		$errors[] = "Only letters and spaces allowed for first name field.";
 	}
 	else
 	{
 		$returnedName = trim($checkFName);
 	}
 
-	
 
-
-	// check there's an entry for a last name
-	$checkLName = $_POST['lastname'];
-	if(empty($_POST['lastname']))
-	{
-		$errors[] = 'You forgot to enter your second name.';
-	}
-	// check last name format
-	elseif(!preg_match("/^[a-zA-Z ]*$/", $checkLName))
-	{
-		$errors[] = "Only letters and spaces allowed for second name field.";
-	}
-	else
-	{
-		$ln = trim($checkLName);
-	}
 
 
 	// check there's an entry for a email
@@ -78,11 +63,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 	if(empty($checkEmail))
 	{
 		$emailError = 'You forgot to enter your email address.';
+		$errors[] = 'You forgot to enter your email address.';
 	}
 	elseif(!preg_match(
         '/^[A-z0-9_\-]+[@][A-z0-9_\-]+([.][A-z0-9_\-]+)+[A-z.]{2,4}$/', $checkEmail))
 	{
 		$emailError = "Invalid Email.";
+		$errors[] = "Invalid Email.";
 	}
 	else
 	{
@@ -93,6 +80,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 	$checkAddress = $_POST['address'];
 	if(empty($checkAddress)){
 		$addressError = 'You forgot to enter your address.';
+		$errors[] = 'You forgot to enter your address.';
 	}else{
 		$returnedAddress = trim($checkAddress);
 	}
@@ -102,10 +90,12 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 	if(empty($checkPhoneNo))
 	{
 		$phoneError = 'You forgot to enter your phone number.';
+		$errors[] = 'You forgot to enter your phone number.';
 	}
 	elseif(!is_numeric($checkPhoneNo))
 	{
 		$phoneError = 'Your phone number cannot contain letters.';
+		$errors[] = 'Your phone number cannot contain letters.';
 	}
 	else
 	{
@@ -144,9 +134,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 
 		// Prepared Statement
 		$insertQuery = "INSERT INTO orders 
-				(order_id, firstname, lastname, email, student, address, phone, size,
+				(order_id, firstname, email, student, address, phone, size,
 				anchovies, pinapples, pepperoni, olives, onion, peppers) 
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		if(!$stmt = $dbc->prepare($insertQuery)){
 			echo "Prepare failed: (" . $dbc->errno . ") " . $dbc->error;
@@ -154,8 +144,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 			
 		// Bind Parameters
 		$mBindParam = $stmt->bind_param(
-			"ssssssisssssss", 
-			$order_id, $firstname, $lastname ,$email, $student,
+			"sssssisssssss", 
+			$order_id, $firstname ,$email, $student,
 				$address, $phoneNo, $size, $addAnchovies, $addPineapple,
 					$addPepperoni, $addOlives, $addOnions, $addPeppers); 
 
@@ -169,7 +159,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 		/* make the sql bind_params equal to the returned value of 
 		$_POST['***'] that was retrieved in the validation above */
 		$firstname = $returnedName;
-		$lastname = $ln;
 		$email = $returnedEmail;
 		$student = $returnedStudent;
 		$address = $returnedAddress;
@@ -194,7 +183,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 			echo "<table border = '1' cellspacing='0'>\n";
 			echo "<tr><th>ID</th>" .
 				     "<th>First Name</th>" .
-				     "<th>Last Name</th>" .		
 				     "<th>Email</th>" .
 				     "<th>Student</th>" .
 				     "<th>Address</th>" .
@@ -210,7 +198,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 	
 			echo "<td>". $order_id . "</td>" .
 				 "<td>" . $returnedName . "</td>" .
-				 "<td>" . $ln . "</td>" .
 				 "<td>" . $returnedEmail . "</td>" .
 				 "<td>" . $returnedStudent . "</td>" .
 				 "<td>" . $returnedAddress . "</td>" .
@@ -235,72 +222,66 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 		
 	// There are errors - loop thru and pint message(s)
 	}else {
-		// echo '<p>Error(s):</p>';
-		// foreach($errors as $msg){
-		// 	echo "- $msg<br />\n";
-		// }
+		echo '<p>Hello '. $returnedName . ' please check the following error(s):</p>';
+		foreach($errors as $msg){
+			echo "- $msg<br />\n";
+		}
 
 		?>
 
-
+<style> 
+.error{ color: red; } 
+#hiddenForm { display: none; }
+</style>
 <h2 id="heading">Pizzas Order Form</h2>
     <form action="<?php echo $_SERVER['PHP_SELF']; ?>"  method="post" novalidate>
-      <h3>What Size of Pizza Would You Like? </h3>
-     
+
+
+    <div id="hiddenForm">
+        <h3>What Size of Pizza Would You Like? </h3>
         Small
         <input id="small" type="radio" name="pizzaSize" value="small" onChange="redraw()"/>
         Medium
         <input id="medium" type="radio" name="pizzaSize" value="medium" onChange="redraw()" />
         Large
         <input id="large" type="radio" name="pizzaSize" value="large" onChange="redraw()" checked/>
-   
-      
-      <h3>Add Extra Toppings</h3>
-    
+     	<h3>Add Extra Toppings</h3>
         Anchovies
-       <input id="anchovies" type="checkbox" name="addAnchovies" value="yes" onChange="redraw()" checked/>
-       
+        <input id="anchovies" type="checkbox" name="addAnchovies" value="yes" onChange="redraw()" checked/>
         Pineapple
-      <input id="pineapple" type="checkbox" name="addPineapple" value="yes" onChange="redraw()" checked/>
-      
+        <input id="pineapple" type="checkbox" name="addPineapple" value="yes" onChange="redraw()" checked/>     
         Pepperoni
-       <input id="pepperoni" type="checkbox" name="addPepperoni" value="yes" onChange="redraw()" checked/>
-       
+        <input id="pepperoni" type="checkbox" name="addPepperoni" value="yes" onChange="redraw()" checked/>
         Olives
         <input id="olives" type="checkbox" name="addOlives" value="yes" onChange="redraw()" checked/>
-        
         Onion
         <input id="onion" type="checkbox" name="addOnion" value="yes" onChange="redraw()" checked/>
-        
         Peppers
         <input id="peppers" type="checkbox" name="addPeppers" value="yes" onChange="redraw()" checked/>
-   
+    </div>
+
+
         <h3>Enter your  details</h3>
         First Name:
-        <input name="firstname" id="cname" type="text" value="<?php echo $returnedName;?>"/><?php echo $nameError;?>
-        <br/>
-        <br/>
-        Second Name:
-        <input name="lastname" id="cname" type="text"/>
+        <input name="firstname" id="cname" type="text" value="<?php echo $returnedName;?>"/><span class="error"><?php echo $nameError;?></span>
         <br/>
         <br/>
         Address:
-        <textarea name="address" id = "caddress" type="text"rows="5" cols="30" value="<?php echo $returnedAddress;?>"/></textarea><?php echo $addressError;?>
+        <textarea name="address" id = "caddress" type="text"rows="5" cols="30" value="<?php echo $returnedAddress;?>"/></textarea>
+        <span class="error"><?php echo $addressError;?></span>
         <br/>
         <br/>
         Email Address:
-        <input name="email" type="email" value="<?php echo $returnedEmail; ?>"/><?php echo $emailError; ?>
+        <input name="email" type="email" value="<?php echo $returnedEmail; ?>"/><span class="error"><?php echo $emailError; ?></span>
         <br/>
         <br/>
         <br/>
         Phone Number:
-        <input name="phoneNo" id="phoneNumber" type="text" value="<?php echo $returnedPhoneNo; ?>"/><?php echo $phoneError; ?>
+        <input name="phoneNo" id="phoneNumber" type="text" value="<?php echo $returnedPhoneNo; ?>"/><span class="error"><?php echo $phoneError; ?></span>
 		 <br/>
          <br/>
 		Tick here if you are student:
         <input type="checkbox" id="studentdiscount" name="student" onChange="redraw()"/>
-       
-  
       <br/>
       <button type="submit" name="submit" value="Place Order" >Submit order</button>
     </form>
