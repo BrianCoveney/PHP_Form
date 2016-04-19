@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>View Order</title>
+	<link href="./Styles/main.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 
@@ -14,9 +15,9 @@ $nameError = $addressError = $emailError = $phoneError="";
 if($_SERVER['REQUEST_METHOD'] == 'POST') 
 {
 	// database connection
-	require('mysqli_connect.php');
+	require_once('mysqli_connect.php');
 
-	// initalise an error array !!!!!!!! PUT ERROR ARRAY BACK IN
+	// initalise an error array 
 	$errors = array();
 
 
@@ -42,13 +43,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 	if(empty($checkFName))
 	{
 		$nameError = 'You forgot to enter your first name.';
-		$errors[] = "You forgot to enter your first name.";
+		$errors[] = "name";
 	}
 	// check first name format
 	elseif(!preg_match("/^[a-zA-Z ]*$/", $checkFName))
 	{
 		$nameError = "Only letters and spaces allowed for first name field.";
-		$errors[] = "Only letters and spaces allowed for first name field.";
+		$errors[] = "name";
 	}
 	else
 	{
@@ -63,13 +64,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 	if(empty($checkEmail))
 	{
 		$emailError = 'You forgot to enter your email address.';
-		$errors[] = 'You forgot to enter your email address.';
+		$errors[] = 'email';
 	}
 	elseif(!preg_match(
         '/^[A-z0-9_\-]+[@][A-z0-9_\-]+([.][A-z0-9_\-]+)+[A-z.]{2,4}$/', $checkEmail))
 	{
 		$emailError = "Invalid Email.";
-		$errors[] = "Invalid Email.";
+		$errors[] = "email";
 	}
 	else
 	{
@@ -80,7 +81,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 	$checkAddress = $_POST['address'];
 	if(empty($checkAddress)){
 		$addressError = 'You forgot to enter your address.';
-		$errors[] = 'You forgot to enter your address.';
+		$errors[] = 'address';
 	}else{
 		$returnedAddress = trim($checkAddress);
 	}
@@ -90,12 +91,12 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 	if(empty($checkPhoneNo))
 	{
 		$phoneError = 'You forgot to enter your phone number.';
-		$errors[] = 'You forgot to enter your phone number.';
+		$errors[] = 'phone number';
 	}
 	elseif(!is_numeric($checkPhoneNo))
 	{
 		$phoneError = 'Your phone number cannot contain letters.';
-		$errors[] = 'Your phone number cannot contain letters.';
+		$errors[] = 'phone number';
 	}
 	else
 	{
@@ -121,6 +122,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 
 	if(isset($_POST['addPeppers'])){ $returnedPeppers = 'Y';
 	}else{ $returnedPeppers = 'N'; }
+
+
+
+	$somevar = isset($_POST['student']);
 
 	/*--- Validation Ends Here ---*/
 
@@ -154,7 +159,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 		}
 
 		// unique ID  
-		$order_id = uniqid(rand(), true);
+		$order_id = uniqid();	//= uniqid(rand(), true);
 
 		/* make the sql bind_params equal to the returned value of 
 		$_POST['***'] that was retrieved in the validation above */
@@ -178,37 +183,44 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 
 		// using the 'result' of the query, we perform a conditional test for success 
 		if($result){
-			// include('receipt.php');
+			
+			include('receipt.php');
 
-			echo "<table border = '1' cellspacing='0'>\n";
-			echo "<tr><th>ID</th>" .
-				     "<th>First Name</th>" .
-				     "<th>Email</th>" .
-				     "<th>Student</th>" .
-				     "<th>Address</th>" .
-				     "<th>Phone No</th>" . 
-				     "<th>Size</th>" . 
-				     "<th>Anchovies</th>" . 
-				     "<th>Pineapple</th>" . 
-				     "<th>Pepperoni</th>" .
-				     "<th>Olives</th>" .
-				     "<th>Onions</th>" . 
-				     "<th>Peppers</th></tr>";
+			// echo "<table border = '1' cellspacing='0'>\n";
+			// echo "<tr><th>ID</th>" .
+			// 	     "<th>First Name</th>" .
+			// 	     "<th>Email</th>" .
+			// 	     "<th>Student</th>" .
+			// 	     "<th>Address</th>" .
+			// 	     "<th>Phone No</th>" . 
+			// 	     "<th>Size</th>" . 
+			// 	     "<th>Anchovies</th>" . 
+			// 	     "<th>Pineapple</th>" . 
+			// 	     "<th>Pepperoni</th>" .
+			// 	     "<th>Olives</th>" .
+			// 	     "<th>Onions</th>" . 
+			// 	     "<th>Peppers</th></tr>";
 
 	
-			echo "<td>". $order_id . "</td>" .
-				 "<td>" . $returnedName . "</td>" .
-				 "<td>" . $returnedEmail . "</td>" .
-				 "<td>" . $returnedStudent . "</td>" .
-				 "<td>" . $returnedAddress . "</td>" .
-				 "<td>" . $returnedPhoneNo . "</td>" .
-				 "<td>" . $returnedSize . "</td>" .
-				 "<td>" . $returnedAnchovies . "</td>" .
-				 "<td>" . $returnedPineapples . "</td>" .
-				 "<td>" . $returnedPepperoni . "</td>" .
-				 "<td>" . $returnedOlives . "</td>" .
-				 "<td>" . $returnedOnions . "</td>" .
-				 "<td>" . $returnedPeppers . "</td>";
+			// echo "<td>". $order_id . "</td>" .
+			// 	 "<td>" . $returnedName . "</td>" .
+			// 	 "<td>" . $returnedEmail . "</td>" .
+			// 	 "<td>" . $returnedStudent . "</td>" .
+			// 	 "<td>" . $returnedAddress . "</td>" .
+			// 	 "<td>" . $returnedPhoneNo . "</td>" .
+			// 	 "<td>" . $returnedSize . "</td>" .
+			// 	 "<td>" . $returnedAnchovies . "</td>" .
+			// 	 "<td>" . $returnedPineapples . "</td>" .
+			// 	 "<td>" . $returnedPepperoni . "</td>" .
+			// 	 "<td>" . $returnedOlives . "</td>" .
+			// 	 "<td>" . $returnedOnions . "</td>" .
+			// 	 "<td>" . $returnedPeppers . "</td>" . 
+			// 	 "<td><a href=\"updateorder.php?ReportID=" . 
+   //                       $order_id . "\">Update</a></td>" . 
+   //                  "</tr>\n";
+
+
+
 
 		}else{
 			echo '<h1>Register Error</h1>';
@@ -222,43 +234,52 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 		
 	// There are errors - loop thru and pint message(s)
 	}else {
-		echo '<p>Hello '. $returnedName . ' please check the following error(s):</p>';
+		echo 'Hello '. $returnedName . ' please check the following error(s): ';
 		foreach($errors as $msg){
-			echo "- $msg<br />\n";
+			echo "$msg | "; 
 		}
+?>
 
-		?>
-
-<style> 
-.error{ color: red; } 
-#hiddenForm { display: none; }
-</style>
 <h2 id="heading">Pizzas Order Form</h2>
     <form action="<?php echo $_SERVER['PHP_SELF']; ?>"  method="post" novalidate>
-
-
-    <div id="hiddenForm">
         <h3>What Size of Pizza Would You Like? </h3>
+     
         Small
         <input id="small" type="radio" name="pizzaSize" value="small" onChange="redraw()"/>
         Medium
         <input id="medium" type="radio" name="pizzaSize" value="medium" onChange="redraw()" />
         Large
         <input id="large" type="radio" name="pizzaSize" value="large" onChange="redraw()" checked/>
-     	<h3>Add Extra Toppings</h3>
+   
+      <div id="pizzaImages">
+    <img id="image1" src="images/base.png" width="250" height="250" alt="food pic"/>
+    <img id="image2" src="images/anchois.png" width="250" height="250" alt="food pic"/>
+    <img id="image3" src="images/pineapple.png" width="250" height="250" alt="food pic"/>
+    <img id="image4" src="images/pepperoni.png" width="250" height="250" alt="food pic"/>
+    <img id="image5" src="images/olives.png" width="250" height="250" alt="food pic"/>
+    <img id="image6" src="images/onion.png" width="250" height="250" alt="food pic"/>
+    <img id="image7" src="images/pepper.png" width="250" height="250" alt="food pic"/>
+    </div>
+      <br>
+      <h3>Add Extra Toppings</h3>
+    
         Anchovies
-        <input id="anchovies" type="checkbox" name="addAnchovies" value="yes" onChange="redraw()" checked/>
+       <input id="anchovies" type="checkbox" name="addAnchovies" value="yes" onChange="redraw()" checked/>
+       
         Pineapple
-        <input id="pineapple" type="checkbox" name="addPineapple" value="yes" onChange="redraw()" checked/>     
+      <input id="pineapple" type="checkbox" name="addPineapple" value="yes" onChange="redraw()" checked/>
+      
         Pepperoni
-        <input id="pepperoni" type="checkbox" name="addPepperoni" value="yes" onChange="redraw()" checked/>
+       <input id="pepperoni" type="checkbox" name="addPepperoni" value="yes" onChange="redraw()" checked/>
+       
         Olives
         <input id="olives" type="checkbox" name="addOlives" value="yes" onChange="redraw()" checked/>
+        
         Onion
         <input id="onion" type="checkbox" name="addOnion" value="yes" onChange="redraw()" checked/>
+        
         Peppers
         <input id="peppers" type="checkbox" name="addPeppers" value="yes" onChange="redraw()" checked/>
-    </div>
 
 
         <h3>Enter your  details</h3>
@@ -267,7 +288,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
         <br/>
         <br/>
         Address:
-        <textarea name="address" id = "caddress" type="text"rows="5" cols="30" value="<?php echo $returnedAddress;?>"/></textarea>
+        <textarea name="address" id = "caddress" type="text"rows="5" cols="30"/><?php echo $returnedAddress;?></textarea>
         <span class="error"><?php echo $addressError;?></span>
         <br/>
         <br/>
@@ -281,7 +302,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 		 <br/>
          <br/>
 		Tick here if you are student:
-        <input type="checkbox" id="studentdiscount" name="student" onChange="redraw()"/>
+		<input type="checkbox" id="studentdiscount" name="student" value="<?php $returnedStudent; ?>"  />
       <br/>
       <button type="submit" name="submit" value="Place Order" >Submit order</button>
     </form>
@@ -289,7 +310,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
     <?php
 	}
 
-}// end the main Submit
+}// end $_SERVER['REQUEST_METHOD'] == 'POST'
 
 ?>
 </body>

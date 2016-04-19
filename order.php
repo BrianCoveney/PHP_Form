@@ -3,6 +3,7 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>Pizza</title>
+  <link href="./Styles/main.css" rel="stylesheet" type="text/css">
 <link href="main.css" rel="stylesheet" type="text/css">
 </head>
 <body>
@@ -67,7 +68,6 @@
         <input name="email" type="email"  />
         <br/>
         <br/>
-       
         <br/>
         Phone Number:
         <input name="phoneNo" id="phoneNumber" type="text" />
