@@ -5,25 +5,7 @@
 </head>
 <body>
 
-
-
-
 <?php 
-// require('mysqli_connect.php');
-
-// $SQLString = "SELECT * FROM orders ORDER BY id";
-// $result = mysqli_query($dbc, $SQLString);
-
-
-// if (mysqli_num_rows($result) > 0) {
-//     // output data of each row
-//     while($row = mysqli_fetch_assoc($result)) {
-//         echo "id: " . $row["id"]. " - Name: " . $row["firstname"]. " " . $row["email"]. "<br>";
-//     }
-// } else {
-//     echo "0 results";
-// }
-
 
 
 echo "<table border = '1' cellspacing='0'>\n";
@@ -58,9 +40,7 @@ echo "<table border = '1' cellspacing='0'>\n";
 				 "<td><a href=\"updateorder.php?ReportID=" . 
                          $order_id . "\">Update</a></td>" . 
                     "</tr>\n";
-
 ?>
-
 
 </body>
 </html>
