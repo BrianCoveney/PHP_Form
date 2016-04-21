@@ -3,10 +3,14 @@
 
 require_once('mysqli_connect.php');
 
-
 // if 'update' is clicked
 if(isset($_POST['update']))
 {
+
+    include('validate.php');
+
+    $orderID =$_POST['order_id'];
+    $hidden = $_POST['hidden'];
     $name = $_POST['firstname'];
     $email = $_POST['email'];
     $address = $_POST['address'];
@@ -35,15 +39,54 @@ if(isset($_POST['update']))
     }else{ $checkedPeppers = 'N'; }
 
 
+    if(empty($errors))
+    {
 
-    $SQLUpdateString = "UPDATE orders SET order_id='$_POST[order_id]', firstname='$name', email='$email', address='$address', phone='$phone', size='$size', student='$checkedStudent', anchovies='$checkedAnchovies', pinapples='$checkedPineapple', pepperoni='$checkedPepperoni', olives='$checkedOlives', onion='$checkedOnion',peppers='$checkedPeppers' WHERE order_id ='$_POST[hidden]'";
+        $updateStatement = "UPDATE orders SET 
+            order_id=?, 
+            firstname=?, 
+            email=?, 
+            address=?, 
+            phone=?, 
+            size=?, 
+            student=?, 
+            anchovies=?, 
+            pinapples=?, 
+            pepperoni=?, 
+            olives=?, 
+            onion=?, 
+            peppers=? 
+            WHERE order_id =?";
+
+        if(!$stmt = $dbc->prepare($updateStatement)){
+            echo "Prepare failed: (" . $dbc->errno . ") ". $dbc->error;
+        }
+
+        $mBindParam = $stmt->bind_param("sssssissssssss", $orderID, 
+            $name, $email, $address, $phone, $size, $checkedStudent, $checkedAnchovies,
+                $checkedPineapple, $checkedPepperoni, $checkedOlives, $checkedOnion, $checkedPeppers, $hidden);
+
+        if(!$mBindParam){
+            echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
+        }
+
+        $stmt->execute();
 
 
-    if(mysqli_query($dbc, $SQLUpdateString)){
-         echo "update sucess";
-    }else{
-           echo "update fail " . mysqli_error($dbc); 
+        if(mysqli_query($dbc, $SQLUpdateString)){
+             echo "<h2>Update Success</h2>";
+        }else{
+               echo "update fail " . mysqli_error($dbc); 
+        }
+
+    }else {
+        echo 'Hello '. $returnedName . ' please check the following error(s): ';
+        foreach($errors as $msg){
+            echo "$msg | "; 
+        }
+
     }
+
 }
 
 
@@ -116,7 +159,7 @@ mysqli_close($dbc);
 
     <h3>Enter your  details</h3>
     First Name:
-    <input name="firstname" id="cname" type="text" value='<?php echo $retFirstName; ?>'/> 
+    <input name="firstname" id="cname" type="text" value='<?php echo $retFirstName; ?>'/>
     <br/>
     <br/>
     Address:
