@@ -1,7 +1,39 @@
 <?php 
 
+$ShowForm=TRUE;
 
-require_once('mysqli_connect.php');
+require('mysqli_connect.php');
+
+
+// fetch data from the DB for the form below
+$SQLString = "SELECT * FROM orders";
+$r = mysqli_query($dbc, $SQLString);
+
+if (mysqli_num_rows($r) > 0) {
+    // output data of each row
+    while($row = mysqli_fetch_array($r)) {
+
+        $retOrderID = $row["order_id"];
+        $returnedName = $row["firstname"];
+        $retEmail = $row['email'];
+        $retAddress = $row['address'];
+        $retPhoneNo = $row['phone'];
+        $retSize = $row['size'];
+        $retStudent = $row['student'];
+        $returnedAnchovies = $row['anchovies'];
+        $retPineapple = $row['pinapples'];
+        $retPepperoni = $row['pepperoni'];
+        $retOlives = $row['olives'];
+        $retOnion = $row['onion'];
+        $retPeppers = $row['peppers'];
+    }
+
+} else {
+        echo "0 results";
+}
+
+
+
 
 // if 'update' is clicked
 if(isset($_POST['update']))
@@ -9,13 +41,14 @@ if(isset($_POST['update']))
 
     include('validate.php');
 
-    $orderID =$_POST['order_id'];
+    $order_id =$_POST['order_id'];
     $hidden = $_POST['hidden'];
     $name = $_POST['firstname'];
     $email = $_POST['email'];
     $address = $_POST['address'];
     $phone = $_POST['phoneNo'];
     $size = $_POST['pizzaSize'];
+
 
     if(isset($_POST['student'])){ $checkedStudent = 'Y';
     }else{ $checkedStudent = 'N'; }
@@ -39,30 +72,18 @@ if(isset($_POST['update']))
     }else{ $checkedPeppers = 'N'; }
 
 
+
     if(empty($errors))
     {
 
-        $updateStatement = "UPDATE orders SET 
-            order_id=?, 
-            firstname=?, 
-            email=?, 
-            address=?, 
-            phone=?, 
-            size=?, 
-            student=?, 
-            anchovies=?, 
-            pinapples=?, 
-            pepperoni=?, 
-            olives=?, 
-            onion=?, 
-            peppers=? 
-            WHERE order_id =?";
+        $updateStatement = "UPDATE orders SET  order_id=?, firstname=?, email=?, address=?, phone=?, size=?, 
+            student=?, anchovies=?, pinapples=?, pepperoni=?, olives=?, onion=?, peppers=? WHERE order_id =?";
 
         if(!$stmt = $dbc->prepare($updateStatement)){
             echo "Prepare failed: (" . $dbc->errno . ") ". $dbc->error;
         }
 
-        $mBindParam = $stmt->bind_param("sssssissssssss", $orderID, 
+        $mBindParam = $stmt->bind_param("ssssisssssssss", $order_id,
             $name, $email, $address, $phone, $size, $checkedStudent, $checkedAnchovies,
                 $checkedPineapple, $checkedPepperoni, $checkedOlives, $checkedOnion, $checkedPeppers, $hidden);
 
@@ -70,14 +91,24 @@ if(isset($_POST['update']))
             echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
         }
 
-        $stmt->execute();
+
+        $result = $stmt->execute();
 
 
-        if(mysqli_query($dbc, $SQLUpdateString)){
-             echo "<h2>Update Success</h2>";
-        }else{
-               echo "update fail " . mysqli_error($dbc); 
-        }
+        // Using the 'result' of the query, we perform a conditional test. 
+        // Either display the receipt, or print the error(s). 
+        // Also, hide the form. The form can be accessed again from the link in the 'receipt'. 
+        if($result){
+            $ShowForm=FALSE;
+            include('receipt.php');
+
+         }else{
+            echo '<h1>Register Error</h1>';
+            echo '<p>MySQLi Error: ' . mysqli_error($dbc); 
+         }
+
+    mysqli_close($dbc);
+        
 
     }else {
         echo 'Hello '. $returnedName . ' please check the following error(s): ';
@@ -87,59 +118,37 @@ if(isset($_POST['update']))
 
     }
 
-}
+} // end $_SERVER['REQUEST_METHOD'] == 'POST'
 
 
 
-$SQLString = "SELECT * FROM orders";
-$result = mysqli_query($dbc, $SQLString);
 
-if (mysqli_num_rows($result) > 0) {
-    // output data of each row
-    while($row = mysqli_fetch_array($result)) {
-
-        $retOrderID = $row["order_id"];
-        $retFirstName = $row["firstname"];
-        $retEmail = $row['email'];
-        $retAddress = $row['address'];
-        $retPhoneNo = $row['phone'];
-        $retStudent = $row['student'];
-        $retAnchovies = $row['anchovies'];
-        $retPineapple = $row['pinapples'];
-        $retPepperoni = $row['pepperoni'];
-        $retOlives = $row['olives'];
-        $retOnion = $row['onion'];
-        $retPeppers = $row['peppers'];
-
-    }
-mysqli_close($dbc);
-
-} else {
-        echo "0 results";
-}
-
+if ($ShowForm===TRUE) {
 ?>
 <h2 id="heading">Pizzas Order Form</h2>
-<form action="updateorder.php"  method="post" novalidate>
+<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" novalidate>
     <h3>What Size of Pizza Would You Like? </h3>
 
     <input name="order_id" id="order" type="text" value='<?php echo $retOrderID; ?>'/><br/>
     <input name="hidden" id="order" type="hidden" value='<?php echo $retOrderID; ?>'/><br/>
  
     Small
-    <input id="small" type="radio" name="pizzaSize" value="small" onChange="redraw()"/>
+    <input id="small" type="radio" name="pizzaSize" value="small" onChange="redraw()"
+    <?php if($retSize === 'small') echo 'checked="checked"';?>/>
     Medium
-    <input id="medium" type="radio" name="pizzaSize" value="medium" onChange="redraw()" />
+    <input id="medium" type="radio" name="pizzaSize" value="medium" onChange="redraw()" 
+    <?php if($retSize === 'medium') echo 'checked="checked"';?>/>
     Large
-    <input id="large" type="radio" name="pizzaSize" value="large" onChange="redraw()" checked/>
+    <input id="large" type="radio" name="pizzaSize" value="large" onChange="redraw()"
+    <?php if($retSize === 'large') echo 'checked="checked"';?>/>
 
 
   <br>
   <h3>Add Extra Toppings</h3>
 
     Anchovies
-   <input id="anchovies" type="checkbox" name="addAnchovies" value="yes" onChange="redraw()"
-   <?php if($retAnchovies === 'Y') echo 'checked="checked"';?>/>
+   <input id="anchovies" type="checkbox" name="addAnchovies" value="yes" onChange="redraw()" 
+   <?php if($returnedAnchovies === 'Y') echo 'checked="checked"';?>/>
     Pineapple
    <input id="pineapple" type="checkbox" name="addPineapple" value="yes" onChange="redraw()" 
     <?php if($retPineapple === 'Y') echo 'checked="checked"';?>/>
@@ -159,7 +168,7 @@ mysqli_close($dbc);
 
     <h3>Enter your  details</h3>
     First Name:
-    <input name="firstname" id="cname" type="text" value='<?php echo $retFirstName; ?>'/>
+    <input name="firstname" id="cname" type="text" value='<?php echo $returnedName; ?>'/>
     <br/>
     <br/>
     Address:
@@ -189,9 +198,7 @@ mysqli_close($dbc);
 
 <?php
 
-// echo "<a href=\"receipt.php?ReportID=" . 
-//                          $retOrderID . "\">View Changed Order</a></td>";
-//     mysqli_close($dbc);
+}
 
 
 ?>

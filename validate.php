@@ -2,7 +2,7 @@
 
 
 
-	global $returnedName, $returnedAddress, $returnedEmail, $returnedPhoneNo, 
+	global $returnedName, $returnedAddress, $returnedEmail, $returnedPhoneNo, $returnedSize,
 		$nameError, $addressError, $emailError, $phoneError;
 
 	
@@ -23,7 +23,22 @@
 
 
 	// radio button selection for 'Size' 
-	$returnedSize = $_POST['pizzaSize'];
+	$checkSize = $_POST['pizzaSize'];
+
+
+	switch ($checkSize) {
+		case 'small':
+			$returnedSize = 'small';
+			break;
+		case 'medium':
+			$returnedSize = 'medium';	
+			break;
+		case 'large':
+			$returnedSize = 'large';
+		default:
+			# code...
+			break;
+	}
 
 
 

@@ -9,7 +9,7 @@
 
 
 echo "<table border = '1' cellspacing='0'>\n";
-			echo "<tr><th>ID</th>" .
+			echo "<tr><th>Order ID</th>" .
 				     "<th>Name</th>" .
 				     "<th>Email</th>" .
 				     "<th>Student</th>" .

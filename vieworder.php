@@ -47,8 +47,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 			echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
 		}
 
+
+
 		// unique ID  
-		$order_id = uniqid();	//= uniqid(rand(), true);
+		$order_id = uniqid();
 
 		/* make the sql bind_params equal to the returned value of 
 		$_POST['***'] that was retrieved in the validation above */
@@ -70,9 +72,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 		$result = $stmt->execute();
 
 
-		// using the 'result' of the query, we perform a conditional test for success 
+		// Using the 'result' of the query, we perform a conditional test. 
+		// Either display the receipt, or print the error(s). 
 		if($result){
-			
+		
 			include('receipt.php');
 
 		}else{
