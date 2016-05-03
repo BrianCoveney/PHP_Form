@@ -29,8 +29,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 		// Prepared Statement
 		$insertQuery = "INSERT INTO orders 
 				(order_id, firstname, email, student, address, phone, size,
-				anchovies, pinapples, pepperoni, olives, onion, peppers) 
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				anchovies, pinapples, pepperoni, olives, onion, peppers, createddatetime) 
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		if(!$stmt = $dbc->prepare($insertQuery)){
 			echo "Prepare failed: (" . $dbc->errno . ") " . $dbc->error;
@@ -38,10 +38,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 			
 		// Bind Parameters
 		$mBindParam = $stmt->bind_param(
-			"sssssisssssss", 
+			"sssssissssssss", 
 			$order_id, $firstname ,$email, $student,
 				$address, $phoneNo, $size, $addAnchovies, $addPineapple,
-					$addPepperoni, $addOlives, $addOnions, $addPeppers); 
+					$addPepperoni, $addOlives, $addOnions, $addPeppers, $createdDateTime); 
 
 		if(!$mBindParam){
 			echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
@@ -51,6 +51,11 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 
 		// unique ID  
 		$order_id = uniqid();
+		$createdDateTime = date('Y-m-d H:i:s');
+		// $createdDateTime = date("F j, Y, g:i a");
+		
+
+		
 
 		/* make the sql bind_params equal to the returned value of 
 		$_POST['***'] that was retrieved in the validation above */

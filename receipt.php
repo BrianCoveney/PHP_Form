@@ -8,6 +8,12 @@
 <?php 
 
 
+// Normailise the MySQL DATETIME format 
+// from: 2016-04-01 14:42:00 
+// to: 	 May 01, 2016, 2:42 pm
+$mDateFormat = date('F j, Y, g:i a', strtotime($createdDateTime));
+
+
 echo "<table border = '1' cellspacing='0'>\n";
 			echo "<tr><th>Order ID</th>" .
 				     "<th>Name</th>" .
@@ -21,7 +27,8 @@ echo "<table border = '1' cellspacing='0'>\n";
 				     "<th>Pepperoni</th>" .
 				     "<th>Olives</th>" .
 				     "<th>Onions</th>" . 
-				     "<th>Peppers</th></tr>";
+				     "<th>Peppers</th>" .
+				     "<th>Date & Time</th></tr>";
 
 	
 			echo "<td>". $order_id . "</td>" .
@@ -37,6 +44,7 @@ echo "<table border = '1' cellspacing='0'>\n";
 				 "<td>" . $returnedOlives . "</td>" .
 				 "<td>" . $returnedOnions . "</td>" .
 				 "<td>" . $returnedPeppers . "</td>" . 
+				 "<td>" . $mDateFormat . "</td>" .
 				 "<td><a href=\"updateorder.php?ReportID=" . 
                          $order_id . "\">Update</a></td>" . 
                     "</tr>\n";

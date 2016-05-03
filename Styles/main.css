@@ -15,5 +15,22 @@ input:valid
 background-color : #99ff99;
 }
 
-.error{ color: red; } 
+.error{ 
+	color: blue; 
+} 
 
+#orderID {
+      border:0px;
+}
+
+#orderIDLabel{
+	font-size: 18px;
+	font-family: 'Source Sans Pro', sans-serif;
+	color: red;
+	font-variant: small-caps;
+}
+
+
+/*body{
+	background-color: blue;
+}*/

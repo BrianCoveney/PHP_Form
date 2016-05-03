@@ -1,3 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Order</title>
+    <link href="./Styles/main.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
 <?php 
 
 $ShowForm=TRUE;
@@ -31,6 +39,7 @@ if (mysqli_num_rows($r) > 0) {
 } else {
         echo "0 results";
 }
+
 
 
 
@@ -76,21 +85,23 @@ if(isset($_POST['update']))
     if(empty($errors))
     {
 
-        $updateStatement = "UPDATE orders SET  order_id=?, firstname=?, email=?, address=?, phone=?, size=?, 
-            student=?, anchovies=?, pinapples=?, pepperoni=?, olives=?, onion=?, peppers=? WHERE order_id =?";
+        $updateStatement = "UPDATE orders SET order_id=?, firstname=?, email=?, address=?, phone=?, size=?, 
+            student=?, anchovies=?, pinapples=?, pepperoni=?, olives=?, onion=?, peppers=?, createddatetime=?  WHERE order_id =?";
 
         if(!$stmt = $dbc->prepare($updateStatement)){
             echo "Prepare failed: (" . $dbc->errno . ") ". $dbc->error;
         }
 
-        $mBindParam = $stmt->bind_param("ssssisssssssss", $order_id,
+        $mBindParam = $stmt->bind_param("ssssissssssssss", $order_id,
             $name, $email, $address, $phone, $size, $checkedStudent, $checkedAnchovies,
-                $checkedPineapple, $checkedPepperoni, $checkedOlives, $checkedOnion, $checkedPeppers, $hidden);
+                $checkedPineapple, $checkedPepperoni, $checkedOlives, $checkedOnion, $checkedPeppers, $createdDateTime, 
+                     $hidden);
 
         if(!$mBindParam){
             echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
         }
 
+        $createdDateTime = date('Y-m-d H:i:s');
 
         $result = $stmt->execute();
 
@@ -121,6 +132,35 @@ if(isset($_POST['update']))
 } // end $_SERVER['REQUEST_METHOD'] == 'POST'
 
 
+// if 'update' is clicked
+if(isset($_POST['delete']))
+{
+
+    include('validate.php');
+
+    $order_id =$_POST['order_id'];
+
+    $deletePrepStatement = "DELETE from orders WHERE order_id=?";
+
+    if(!$stmt = $dbc->prepare($deletePrepStatement)){
+            echo "Prepare failed: (" . $dbc->errno . ") ". $dbc->error;
+    }
+
+    $mBindParam = $stmt->bind_param("s", $order_id);
+
+    if(!$mBindParam){
+        echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
+    }
+    
+    $stmt->execute();
+
+    echo "DELETED!";
+
+    $ShowForm = FALSE; 
+
+    echo '<p><a href="order.php">Start Again?</a></p>';
+
+}
 
 
 if ($ShowForm===TRUE) {
@@ -129,7 +169,7 @@ if ($ShowForm===TRUE) {
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" novalidate>
     <h3>What Size of Pizza Would You Like? </h3>
 
-    <input name="order_id" id="order" type="text" value='<?php echo $retOrderID; ?>'/><br/>
+    <span id="orderIDLabel">Your Order - </span><input name="order_id" id="orderID" type="text" value='<?php echo $retOrderID; ?>' readonly/><br/>
     <input name="hidden" id="order" type="hidden" value='<?php echo $retOrderID; ?>'/><br/>
  
     Small
@@ -173,7 +213,6 @@ if ($ShowForm===TRUE) {
     <br/>
     Address:
     <textarea name="address" id = "caddress" type="text"rows="5" cols="30"/><?php echo $retAddress;?></textarea>
-    <span class="error"> 
     <br/>
     <br/>
     Email Address:
@@ -186,19 +225,13 @@ if ($ShowForm===TRUE) {
 	 <br/>
      <br/>
 	Tick here if you are student:
-
     <input type="checkbox" id="studentdiscount" name="student" value="1" <?php if($retStudent === 'Y') echo 'checked="checked"';?> />
-    
   <br/>
-  <button type="submit" name="update" value="Place Order" >Update order</button>
+  <button type="submit" name="update" value="Update Order" >Update order</button>
+  <button type="submit" name="delete" value="Delete Order" onclick="return confirm('Are you Sure?');">Delete Order</button>
 </form>
 
 <br/>
-
-
-<?php
-
-}
-
-
-?>
+<?php } ?>
+</body>
+</html>
