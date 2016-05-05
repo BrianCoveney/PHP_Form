@@ -2,8 +2,9 @@
 
 
 
-	global $returnedName, $returnedAddress, $returnedEmail, $returnedPhoneNo, $returnedSize,
-		$nameError, $addressError, $emailError, $phoneError;
+	global $returnedName, $returnedLastName, $returnedAddress, $returnedEmail, 
+			$returnedPhoneNo, $returnedSize, $returnedPrice,
+				$nameError, $addressError, $emailError, $phoneError;
 
 	
 	// initalise an error array 
@@ -14,27 +15,22 @@
 	are stored in variables. These are used later on -
 	for insertion into the db ---*/
 
-	// checkbox Y/N 
-	if(isset($_POST['student'])){
-		$returnedStudent = 'Y';
-	}else{
-		$returnedStudent = 'N';
-	}
-
+	
 
 	// radio button selection for 'Size' 
 	$checkSize = $_POST['pizzaSize'];
-
-
 	switch ($checkSize) {
 		case 'small':
 			$returnedSize = 'small';
+			$returnedPrice = 6; // 6 euro
 			break;
 		case 'medium':
 			$returnedSize = 'medium';	
+			$returnedPrice = 10;
 			break;
 		case 'large':
 			$returnedSize = 'large';
+			$returnedPrice = 12;
 		default:
 			# code...
 			break;
@@ -57,7 +53,19 @@
 	}
 	else
 	{
-		$returnedName = trim($checkFName);
+		// requires that user enters their Last Name, by checking for a space
+		// after Firsr Name
+		$checkForSpace = strpos($checkFName, " ");
+
+		if($checkForSpace === false){
+			$nameError = 'You forgot to enter your last name.';
+			$errors[] = "name";
+		}else{
+
+			$nameArr = explode(" ", $checkFName);
+			$returnedName = $nameArr[0];
+			$returnedLastName = $nameArr[1];
+		}
 	}
 
 
@@ -108,24 +116,84 @@
 	}
 
 
+
+	
 	// checkbox Y/N for 'Toppings'
-	if(isset($_POST['addAnchovies'])){ $returnedAnchovies = 'Y';
-	}else{ $returnedAnchovies = 'N'; }
+	if(isset($_POST['addAnchovies'])){ 
+		$returnedAnchovies = 'Y';
+		if($checkSize == "small"){
+			$returnedPrice += 0.5; // 50c added
+		}else{
+			$returnedPrice += 1;// 1euro added
+		}	
+	}else{ 
+		$returnedAnchovies = 'N'; 
+	}
 	
-	if(isset($_POST['addPineapple'])){ $returnedPineapples = 'Y';
-	}else{ $returnedPineapples = 'N'; }
+	if(isset($_POST['addPineapple'])){ 
+		$returnedPineapples = 'Y';
+		if($checkSize == "small"){
+			$returnedPrice += 0.5;
+		}else{
+			$returnedPrice += 1;
+		}
+	}else{ 
+		$returnedPineapples = 'N'; 
+	}
 	
-	if(isset($_POST['addPepperoni'])){ $returnedPepperoni = 'Y';
-	}else{ $returnedPepperoni = 'N'; }
+	if(isset($_POST['addPepperoni'])){ 
+		$returnedPepperoni = 'Y';
+		if($checkSize == "small"){
+			$returnedPrice += 0.5;
+		}else{
+			$returnedPrice += 1;
+		}
+	}else{ 
+		$returnedPepperoni = 'N'; 
+	}
 
-	if(isset($_POST['addOlives'])){ $returnedOlives = 'Y';
-	}else{ $returnedOlives = 'N'; }
+	if(isset($_POST['addOlives'])){ 
+		$returnedOlives = 'Y';
+		if($checkSize == "small"){
+			$returnedPrice += 0.5;
+		}else{
+			$returnedPrice += 1;
+		}
+	}else{ 
+		$returnedOlives = 'N'; 
+	}
 
-	if(isset($_POST['addOnion'])){ $returnedOnions = 'Y';
-	}else{ $returnedOnions = 'N'; }
+	if(isset($_POST['addOnion'])){ 
+		$returnedOnions = 'Y';
+		if($checkSize == "small"){
+			$returnedPrice += 0.5;
+		}else{
+			$returnedPrice += 1;
+		}
+	}else{ 
+		$returnedOnions = 'N'; 
+	}
 
-	if(isset($_POST['addPeppers'])){ $returnedPeppers = 'Y';
-	}else{ $returnedPeppers = 'N'; }
+	if(isset($_POST['addPeppers'])){ 
+		$returnedPeppers = 'Y';
+		if($checkSize == "small"){
+			$returnedPrice += 0.5;
+		}else{
+			$returnedPrice += 1;
+		}
+	}else{ 
+		$returnedPeppers = 'N'; 
+	}
+
+
+	// checkbox for Student discount
+	if(isset($_POST['student'])){
+		$returnedStudent = 'Y';
+		$returnedPrice *= 0.9; // 10% student discount
+	}else{
+		$returnedStudent = 'N';
+	}
+
 
 
  ?>

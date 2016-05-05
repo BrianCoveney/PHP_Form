@@ -1,16 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title>Update Order</title>
     <link href="./Styles/main.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="./js/pizza-order.js"></script>
 </head>
 <body>
 
 <?php 
 
+
+
+
 $ShowForm=TRUE;
+$nameError =""; 
+$emailError =""; 
+$phoneError =""; 
+$addressError ="";
+
+
+
+
 
 require('mysqli_connect.php');
+
 
 
 // fetch data from the DB for the form below
@@ -23,9 +37,11 @@ if (mysqli_num_rows($r) > 0) {
 
         $retOrderID = $row["order_id"];
         $returnedName = $row["firstname"];
+        $retLastName = $row["lastname"];
         $retEmail = $row['email'];
         $retAddress = $row['address'];
         $retPhoneNo = $row['phone'];
+        $retPrice = $row['price'];
         $retSize = $row['size'];
         $retStudent = $row['student'];
         $returnedAnchovies = $row['anchovies'];
@@ -41,6 +57,20 @@ if (mysqli_num_rows($r) > 0) {
 }
 
 
+$id="";
+$restID="";
+
+$id = ($_GET['order_id']);
+
+$subID =  substr($id, 1); // remove first char, the '?'
+
+if($subID == $retOrderID){
+    echo "<h1>ID Found</h1>";
+}else{
+    header('Location: http://localhost/phpproj/pizza/page-not-found.php');
+    // exit;
+}
+
 
 
 
@@ -52,48 +82,138 @@ if(isset($_POST['update']))
 
     $order_id =$_POST['order_id'];
     $hidden = $_POST['hidden'];
-    $name = $_POST['firstname'];
+    $fname = $_POST['firstname'];
+    $lname = $_POST['lastname'];
     $email = $_POST['email'];
     $address = $_POST['address'];
     $phone = $_POST['phoneNo'];
     $size = $_POST['pizzaSize'];
+    $price = $_POST['price'];
 
 
-    if(isset($_POST['student'])){ $checkedStudent = 'Y';
-    }else{ $checkedStudent = 'N'; }
 
-    if(isset($_POST['addAnchovies'])){ $checkedAnchovies = 'Y';
-    }else{ $checkedAnchovies = 'N'; }
 
-    if(isset($_POST['addPineapple'])){ $checkedPineapple = 'Y';
-    }else{ $checkedPineapple = 'N'; }
 
-    if(isset($_POST['addPepperoni'])){ $checkedPepperoni = 'Y';
-    }else{ $checkedPepperoni = 'N'; }
+    // requires that user enters their Last Name, by checking for a space
+    // after Firsr Name
+    $checkForSpace = strpos($checkFName, " ");
 
-    if(isset($_POST['addOlives'])){ $checkedOlives = 'Y';
-    }else{ $checkedOlives = 'N'; }
+    if($checkForSpace === false){
+        $nameError = 'You forgot to enter your last name.';
+        $errors[] = "name";
+    }else{
+        $nameArr = explode(" ", $checkFName);
+        $fname = $nameArr[0];
+        $lname = $nameArr[1];
+    }
 
-    if(isset($_POST['addOnion'])){ $checkedOnion = 'Y';
-    }else{ $checkedOnion = 'N'; }
 
-    if(isset($_POST['addPeppers'])){ $checkedPeppers = 'Y';
-    }else{ $checkedPeppers = 'N'; }
+    // radio button selection for 'Size' 
+    $checkSize = $_POST['pizzaSize'];
+    switch ($checkSize) {
+        case 'small':
+            $price = 6;
+            break;
+        case 'medium':
+            $price = 10;
+            break;
+        case 'large':
+            $price = 12;
+        default:
+            break;
+    }
+    
+
+    if(isset($_POST['addAnchovies'])){ 
+        $checkedAnchovies = 'Y';
+        if($checkSize == "small"){
+            $price += 0.5;
+        }else{
+            $price += 1;
+        }
+    }else{ 
+        $checkedAnchovies = 'N'; 
+    }
+
+    if(isset($_POST['addPineapple'])){ 
+        $checkedPineapple = 'Y';
+        if($checkSize == "small"){
+            $price += 0.5;
+        }else{
+            $price += 1;
+        }
+    }else{ 
+        $checkedPineapple = 'N'; 
+    }
+
+    if(isset($_POST['addPepperoni'])){ 
+        $checkedPepperoni = 'Y';
+        if($checkSize == "small"){
+            $price += 0.5;
+        }else{
+            $price += 1;
+        }
+    }else{ 
+        $checkedPepperoni = 'N'; 
+    }
+
+    if(isset($_POST['addOlives'])){ 
+        $checkedOlives = 'Y';
+        if($checkSize == "small"){
+            $price += 0.5;
+        }else{
+            $price += 1;
+        }
+    }else{ 
+        $checkedOlives = 'N'; 
+    }
+
+    if(isset($_POST['addOnion'])){ 
+        $checkedOnion = 'Y';
+        if($checkSize == "small"){
+            $price += 0.5;
+        }else{
+            $price += 1;
+        }
+    }else{ 
+        $checkedOnion = 'N'; 
+    }
+
+    if(isset($_POST['addPeppers'])){ 
+        $checkedPeppers = 'Y';
+        if($checkSize == "small"){
+            $price += 0.5;
+        }else{
+            $price += 1;
+        }
+    }else{
+        $checkedPeppers = 'N'; 
+    }
+
+
+    if(isset($_POST['student'])){ 
+        $checkedStudent = 'Y';
+        $price *= 0.9; // 10% student discount
+
+    }else{ 
+        $checkedStudent = 'N'; 
+    }
 
 
 
     if(empty($errors))
     {
 
-        $updateStatement = "UPDATE orders SET order_id=?, firstname=?, email=?, address=?, phone=?, size=?, 
-            student=?, anchovies=?, pinapples=?, pepperoni=?, olives=?, onion=?, peppers=?, createddatetime=?  WHERE order_id =?";
+        $updateStatement = "UPDATE orders SET 
+        order_id=?, firstname=?, lastname=?, email=?, student=?, address=?, phone=?, price=?, size=?, 
+             anchovies=?, pinapples=?, pepperoni=?, olives=?, onion=?, peppers=?, createddatetime=?  WHERE order_id =?";
 
         if(!$stmt = $dbc->prepare($updateStatement)){
             echo "Prepare failed: (" . $dbc->errno . ") ". $dbc->error;
         }
 
-        $mBindParam = $stmt->bind_param("ssssissssssssss", $order_id,
-            $name, $email, $address, $phone, $size, $checkedStudent, $checkedAnchovies,
+        $mBindParam = $stmt->bind_param("ssssssidsssssssss", 
+            $order_id, $fname, $lname, $email, $checkedStudent, $address, $phone, $price, $size, $checkedAnchovies,
                 $checkedPineapple, $checkedPepperoni, $checkedOlives, $checkedOnion, $checkedPeppers, $createdDateTime, 
                      $hidden);
 
@@ -164,9 +284,10 @@ if(isset($_POST['delete']))
 
 
 if ($ShowForm===TRUE) {
+
 ?>
 <h2 id="heading">Pizzas Order Form</h2>
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" novalidate>
+<form id="pizza-form" action="<?php echo $_SERVER['PHP_SELF']; ?>" name="mForm" method="post" novalidate>
     <h3>What Size of Pizza Would You Like? </h3>
 
     <span id="orderIDLabel">Your Order - </span><input name="order_id" id="orderID" type="text" value='<?php echo $retOrderID; ?>' readonly/><br/>
@@ -181,10 +302,17 @@ if ($ShowForm===TRUE) {
     Large
     <input id="large" type="radio" name="pizzaSize" value="large" onChange="redraw()"
     <?php if($retSize === 'large') echo 'checked="checked"';?>/>
-
-
-  <br>
-  <h3>Add Extra Toppings</h3>
+    <div id="pizzaImages">
+        <img id="image1" src="images/base.png" width="250" height="250" alt="food pic"/>
+        <img id="image2" src="images/anchois.png" width="250" height="250" alt="food pic"/>
+        <img id="image3" src="images/pineapple.png" width="250" height="250" alt="food pic"/>
+        <img id="image4" src="images/pepperoni.png" width="250" height="250" alt="food pic"/>
+        <img id="image5" src="images/olives.png" width="250" height="250" alt="food pic"/>
+        <img id="image6" src="images/onion.png" width="250" height="250" alt="food pic"/>
+        <img id="image7" src="images/pepper.png" width="250" height="250" alt="food pic"/>
+    </div>
+    <br>
+    <h3>Add Extra Toppings</h3>
 
     Anchovies
    <input id="anchovies" type="checkbox" name="addAnchovies" value="yes" onChange="redraw()" 
@@ -205,23 +333,30 @@ if ($ShowForm===TRUE) {
     <input id="peppers" type="checkbox" name="addPeppers" value="yes" onChange="redraw()" 
     <?php if($retPeppers === 'Y') echo 'checked="checked"';?>/>
 
+    <h3>Total Price is: €<span id="pricetext">18</span></h3>
+    <input type="hidden" name="price" id="mPrice" value='<?php echo $retPrice; ?>'/>
+    
+
 
     <h3>Enter your  details</h3>
-    First Name:
-    <input name="firstname" id="cname" type="text" value='<?php echo $returnedName; ?>'/>
+    Name:
+    <input name="firstname" id="cname" type="text" value='<?php echo $returnedName . " " . $retLastName; ?>'/>
+    <span class="error"><?php echo $nameError;?></span>
+    <input name="lastname" id="cname" type="hidden" value='<?php echo $retLastName; ?>'/>
     <br/>
     <br/>
     Address:
     <textarea name="address" id = "caddress" type="text"rows="5" cols="30"/><?php echo $retAddress;?></textarea>
+    <span class="error"><?php echo $addressError;?></span>
     <br/>
     <br/>
     Email Address:
-    <input name="email" type="email" value="<?php echo $retEmail; ?>"/> 
+    <input name="email" type="email" value="<?php echo $retEmail; ?>"/><span class="error"><?php echo $emailError; ?></span> 
     <br/>
     <br/>
     <br/>
     Phone Number:
-    <input name="phoneNo" id="phoneNumber" type="text" value="<?php echo $retPhoneNo; ?>"/> 
+    <input name="phoneNo" id="phoneNumber" type="text" value="<?php echo $retPhoneNo; ?>"/><span class="error"><?php echo $phoneError; ?></span> 
 	 <br/>
      <br/>
 	Tick here if you are student:

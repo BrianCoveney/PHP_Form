@@ -31,6 +31,14 @@ background-color : #99ff99;
 }
 
 
-/*body{
-	background-color: blue;
-}*/
+.fieldset{
+	background-color: white;
+}
+
+#receipt-bg{
+	background-image: url('../images/pizza_backgr.jpg');
+}
+
+.mTime{
+	color: white;
+}
