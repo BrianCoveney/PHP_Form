@@ -53,23 +53,42 @@ if (mysqli_num_rows($r) > 0) {
     }
 
 } else {
-        echo "0 results";
+        
+        // If, for example by calling
+        // http://localhost/vieworder.php?order_id=54ff645d4506a <= incorrect order_id
+        // the order_id cannot be found, the customer should be presented with a
+        // “cannot find order” style of error message.
+
+        header('Location: http://localhost/phpproj/brian_coveney/page-not-found.php');
+        exit;
+
 }
 
 
-$id="";
-$restID="";
 
-$id = ($_GET['order_id']);
 
-$subID =  substr($id, 1); // remove first char, the '?'
+// This will redirect to page-not-found.php if user enters invalid URL,
+// but will also redirect when 'Update' is clicked
 
-if($subID == $retOrderID){
-    echo "<h1>ID Found</h1>";
-}else{
-    header('Location: http://localhost/phpproj/pizza/page-not-found.php');
-    // exit;
-}
+// $id="";
+// $id = ($_GET['order_id']);
+
+// // $subID =  substr($id, 1); // remove first char, the '?'
+
+// //prepend '?' to variable, to match $_GET['order_id']
+// $mOrderID = '?' . $retOrderID;
+
+
+// if($id == $mOrderID){
+//     echo "<h1>ID equal: $id = $mOrderID</h1>";
+// }else{
+
+//     echo "<h1>ID not: $id != $mOrderID</h1>";
+
+//     // header('Location: http://localhost/phpproj/brian_coveney/page-not-found.php');
+//     // exit;
+// }
+
 
 
 
@@ -226,6 +245,8 @@ if(isset($_POST['update']))
         $result = $stmt->execute();
 
 
+
+
         // Using the 'result' of the query, we perform a conditional test. 
         // Either display the receipt, or print the error(s). 
         // Also, hide the form. The form can be accessed again from the link in the 'receipt'. 
@@ -237,6 +258,8 @@ if(isset($_POST['update']))
             echo '<h1>Register Error</h1>';
             echo '<p>MySQLi Error: ' . mysqli_error($dbc); 
          }
+
+
 
     mysqli_close($dbc);
         
@@ -252,7 +275,11 @@ if(isset($_POST['update']))
 } // end $_SERVER['REQUEST_METHOD'] == 'POST'
 
 
-// if 'update' is clicked
+
+
+
+
+// if 'delete' is clicked
 if(isset($_POST['delete']))
 {
 
@@ -273,6 +300,38 @@ if(isset($_POST['delete']))
     }
     
     $stmt->execute();
+
+
+
+    // // This will redirect if user enters invalid URL,
+   // but will also redirect when 'Update' is clicked
+
+    // $id="";
+    // $id = ($_GET['order_id']);
+
+    if (isset($_GET['id'])) {
+
+        // $subID =  substr($id, 1); // remove first char, the '?'
+
+        //prepend '?' to variable, to match $_GET['order_id']
+        $mOrderID = '?' . $retOrderID;
+
+
+        if($id == $mOrderID){
+            echo "<h1>ID equal: $id = $mOrderID</h1>";
+        }else{
+
+            echo "<h1>ID not: $id != $mOrderID</h1>";
+
+            // header('Location: http://localhost/phpproj/brian_coveney/page-not-found.php');
+            // exit;
+        }
+    }else{
+        echo "EMPTY Id";
+    }
+
+
+
 
     echo "DELETED!";
 
